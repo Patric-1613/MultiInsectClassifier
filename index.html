@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Classification</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #333;
+        }
+        .container {
+            text-align: center;
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 400px;
+        }
+        h2 {
+            color: #444;
+        }
+        label {
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: block;
+        }
+        select, input[type="file"], button {
+            margin-top: 10px;
+            margin-bottom: 20px;
+            padding: 10px;
+            width: 100%;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        #predictionResult {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #333;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Upload Image for Classification</h2>
+        
+        <form action="/predict" method="POST" enctype="multipart/form-data">
+            <!-- Dropdown menu to select model -->
+            <label for="model">Choose a model:</label>
+            <select name="model" id="model" required>
+                <option value="Densenet">DenseNet</option>
+                <option value="Inception">Inception</option>
+                <option value="ResNet">ResNet</option>
+                <option value="MobileNet">MobileNet</option>
+                <option value="EfficientNet">EfficientNet</option>
+                <option value="CustomCNN">Custom CNN</option> <!-- Added Custom CNN option -->
+            </select>
+            
+            <!-- File input for uploading image -->
+            <label for="file">Upload an image:</label>
+            <input type="file" name="file" id="file" accept="image/*" required>
+            
+            <!-- Submit button -->
+            <button type="submit">Predict</button>
+        </form>
+
+        <h3>Prediction:</h3>
+        <div id="predictionResult"></div>
+    </div>
+
+    <script>
+        const form = document.querySelector('form');
+        form.onsubmit = async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(form);
+            const response = await fetch('/predict', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                document.getElementById('predictionResult').innerText = `Predicted Class: ${data.prediction}`;
+            } else {
+                document.getElementById('predictionResult').innerText = `Error: Unable to predict. Please try again.`;
+            }
+        };
+    </script>
+</body>
+</html>
